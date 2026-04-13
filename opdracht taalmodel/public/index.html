@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detective Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="chat-container">
+    <header class="chat-header">
+      <h1>Detective Game</h1>
+      <p>Help Detective Chad solve the mystery at Hotel Noir.</p>
+    </header>
+
+    <section id="messages" class="messages"></section>
+
+    <form id="chat-form" class="chat-form">
+      <input
+        type="text"
+        id="input"
+        placeholder="Type your message..."
+        autocomplete="off"
+      />
+      <button type="submit">Send</button>
+    </form>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
