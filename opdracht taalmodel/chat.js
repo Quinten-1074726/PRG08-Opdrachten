@@ -59,5 +59,9 @@ export async function callAssistant(prompt) {
 
   messages.push(new AIMessage(content));
 
-  return content;
+  return {
+    message: content,
+    tokens: result?.usage_metadata?.total_tokens ?? 0
+  };
+
 }

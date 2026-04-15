@@ -21,7 +21,8 @@ app.post("/api/chat", async (req, res) => {
     }
 
     const response = await callAssistant(message);
-    res.json({ response });
+    res.json(response);
+
   } catch (error) {
     console.error(error);
 

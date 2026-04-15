@@ -164,3 +164,9 @@ body {
 .bubble li {
   margin-bottom: 5px;
 }
+
+.tokens {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}

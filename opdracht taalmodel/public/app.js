@@ -25,7 +25,7 @@ form.addEventListener("submit", async (event) => {
     });
 
     const data = await response.json();
-    addMessage(data.response, "assistant");
+    addMessage(data.message, "assistant", data.tokens);
   } catch (error) {
     addMessage("Er ging iets mis met de server.", "assistant");
   } finally {
@@ -33,16 +33,27 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-function addMessage(text, role) {
-  const messageEl = document.createElement("div");
-  messageEl.classList.add("message", role);
+function addMessage(text, role, tokens = null) {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("message", role);
+
+  const bubble = document.createElement("div");
+  bubble.classList.add("bubble");
 
   if (role === "assistant") {
-    messageEl.innerHTML = micromark(text);
+    bubble.innerHTML = micromark(text);
   } else {
-    messageEl.textContent = text;
+    bubble.textContent = text;
   }
 
-  messagesDiv.appendChild(messageEl);
+  if (tokens !== null) {
+    const tokenInfo = document.createElement("div");
+    tokenInfo.classList.add("tokens");
+    tokenInfo.textContent = `Tokens: ${tokens}`;
+    bubble.appendChild(tokenInfo);
+  }
+
+  wrapper.appendChild(bubble);
+  messagesDiv.appendChild(wrapper);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
