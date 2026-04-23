@@ -3,7 +3,7 @@ import Replicate from "replicate";
 
 export const generateImage = tool(
   async ({ subject }) => {
-    console.log(`🎨 generating image for: ${subject}`);
+    console.log(` generating image for: ${subject}`);
 
     const replicate = new Replicate({
       auth: process.env.REPLICATE_API_TOKEN,
