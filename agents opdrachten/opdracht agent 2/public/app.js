@@ -68,7 +68,7 @@ function addAssistantMessage(text, image = "", usedTools = []) {
   textEl.innerHTML = text;
   bubble.appendChild(textEl);
 
-  if (image) {
+  if (typeof image === "string" && image.trim() !== "") {
     const img = document.createElement("img");
     img.src = `/images/${image}`;
     img.style.maxWidth = "200px";
@@ -95,5 +95,5 @@ function addAssistantMessage(text, image = "", usedTools = []) {
 }
 
 window.addEventListener("load", () => {
-  addAssistantMessage("Hallo! Waarmee kan ik je helpen?", []);
+  addAssistantMessage("Hallo! Waarmee kan ik je helpen?", "", []);
 });
