@@ -1,5 +1,5 @@
 import express from "express";
-import { callOpenAI } from "./agent.js";
+import { callAgent } from "./agent.js";
 
 const app = express();
 
@@ -9,17 +9,23 @@ app.use(express.static("public"));
 app.post("/api/chat", async (req, res) => {
   try {
     const { prompt, userid } = req.body;
-    console.log(`user ${userid} heeft deze vraag: ${prompt}`);
+
     if (!prompt) {
-      return res.status(400).json({ message: "Missing prompt", usedTools: [] });
+      return res.status(400).json({
+        message: "Missing prompt",
+        usedTools: [],
+      });
     }
 
     if (!userid) {
-      return res.status(400).json({ message: "Missing userid", usedTools: [] });
+      return res.status(400).json({
+        message: "Missing userid",
+        usedTools: [],
+      });
     }
 
-    const result = await callOpenAI(prompt, userid);
-    res.json(result);
+    const response = await callAgent(prompt, userid);
+    res.json(response);
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).json({
@@ -28,4 +34,5 @@ app.post("/api/chat", async (req, res) => {
     });
   }
 });
-app.listen(3000, () => console.log("started"));
+
+app.listen(3000, () => console.log("started on localhost:3000"));

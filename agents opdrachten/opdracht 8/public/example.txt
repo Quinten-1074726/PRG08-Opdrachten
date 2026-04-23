@@ -1,0 +1,15 @@
+Dit vak gaat over taalmodellen, agents en document search.
+In les 7 leren we hoe we documenten kunnen omzetten naar vectordata.
+Daarvoor splitsen we documenten eerst in chunks.
+Vervolgens maken we embeddings van die chunks met een embedding model.
+Deze embeddings worden opgeslagen in een vectorstore.
+Als een gebruiker daarna een vraag stelt, kunnen we relevante chunks terugvinden.
+Die relevante tekst geven we vervolgens mee aan een taalmodel om een goed antwoord te genereren.
+
+Een vectorstore is dus een soort database voor taalmodellen.
+In plaats van letterlijk woorden te matchen, vergelijkt een vectorstore de betekenis van tekst.
+Daardoor kan het systeem ook relevante informatie vinden als de vraag anders geformuleerd is dan de originele tekst.
+
+Bij retrieval augmented generation, oftewel RAG, zoekt het systeem eerst relevante tekst op.
+Daarna gebruikt het taalmodel die tekst als context om een antwoord te formuleren.
+Zo kan een model ook vragen beantwoorden over documenten die niet in de originele trainingdata zaten.
