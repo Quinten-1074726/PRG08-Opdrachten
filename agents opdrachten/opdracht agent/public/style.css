@@ -1,35 +1,99 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
+* {
+  box-sizing: border-box;
 }
 
-.chat-container {
-  max-width: 800px;
+body {
+  font-family: Arial, sans-serif;
+  background: #0a0a0a;
+  margin: 0;
+  padding: 24px;
+  color: #f7e6c4;
+}
+
+.cinema {
+  max-width: 900px;
   margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
+  background: linear-gradient(180deg, #1b1111, #080808);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
+  border: 1px solid #5c3232;
+}
+
+.cinema-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 215, 150, 0.25);
+}
+
+.avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #c89b3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 0 18px rgba(255, 190, 80, 0.45);
 }
 
 h1 {
-  margin-top: 0;
+  margin: 0;
+  font-size: 34px;
+  color: #ffd98a;
+  letter-spacing: 1px;
+}
+
+.cinema-header p {
+  margin: 4px 0 0;
+  color: #d9c6a3;
+}
+
+.screen {
+  margin-top: 20px;
+  background: #0b0b0d;
+  border: 8px solid #1c1414;
+  border-radius: 14px;
+
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.9),
+    0 0 25px rgba(255, 180, 80, 0.1);
+}
+
+.screen-top {
+  height: 22px;
+  background: repeating-linear-gradient(
+    90deg,
+    #8c1f1f 0px,
+    #8c1f1f 28px,
+    #641313 28px,
+    #641313 56px
+  );
+  border-bottom: 2px solid #c89b3c;
 }
 
 .messages {
-  min-height: 400px;
-  max-height: 500px;
+  min-height: 430px;
+  max-height: 520px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 16px;
-  margin-bottom: 16px;
-  background: #fafafa;
+  padding: 22px;
+
+  background:
+    radial-gradient(circle at center,
+      rgba(255,255,255,0.06) 0%,
+      rgba(255,255,255,0.02) 35%,
+      #050506 70%
+    );
+
+  border-radius: 4px;
 }
 
 .message-row {
   display: flex;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .user-row {
@@ -42,49 +106,100 @@ h1 {
 
 .bubble {
   max-width: 75%;
-  padding: 12px 14px;
-  border-radius: 12px;
-  line-height: 1.4;
+  padding: 14px 16px;
+  border-radius: 16px;
+  line-height: 1.45;
+  font-size: 16px;
 }
 
 .user-bubble {
-  background: #2f6df6;
+  background: linear-gradient(135deg, #b11226, #e3363e);
   color: white;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 8px 18px rgba(180, 20, 30, 0.35);
 }
 
 .assistant-bubble {
-  background: #e9e9ee;
-  color: black;
+  background: #f4e7c7;
+  color: #151515;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+.assistant-bubble p:first-child {
+  margin-top: 0;
+}
+
+.assistant-bubble p:last-child {
+  margin-bottom: 0;
 }
 
 .chat-form {
   display: flex;
   gap: 10px;
+  margin-top: 16px;
 }
 
 .chat-form input {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   font-size: 16px;
+  border-radius: 999px;
+  border: 2px solid #f8cd70;
+  background: #120d0d;
+  color: #fff5dd;
+  outline: none;
+}
+
+.chat-form input::placeholder {
+  color: #b9a98c;
+}
+
+.chat-form input:focus {
+  box-shadow: 0 0 0 3px rgba(200, 155, 60, 0.25);
 }
 
 .chat-form button {
-  padding: 12px 18px;
+  padding: 14px 22px;
   font-size: 16px;
   cursor: pointer;
+  border-radius: 999px;
+  border: none;
+  background: #ffc64c;
+  color: #160e0e;
+  font-weight: bold;
+}
+
+.chat-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .tools-wrap {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .tool-tag {
   display: inline-block;
-  background: #cfe3ff;
-  color: #1f4ea3;
+  background: #2b1b1b;
+  color: #ffd98a;
+  border: 1px solid #c89b3c;
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 5px 11px;
   margin-right: 6px;
   margin-top: 6px;
   font-size: 14px;
+}
+
+.messages::-webkit-scrollbar {
+  width: 10px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: #c89b3c;
+  border-radius: 999px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background: #181010;
 }

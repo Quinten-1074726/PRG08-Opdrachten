@@ -8,9 +8,16 @@ const button = form.querySelector("button");
 let userid = localStorage.getItem("userid");
 
 if (!userid) {
-  userid = `docuser-${crypto.randomUUID()}`;
+  userid = `cinematch-${crypto.randomUUID()}`;
   localStorage.setItem("userid", userid);
 }
+
+window.addEventListener("load", () => {
+  addAssistantMessage(
+    "Welkom bij CineMatch Waar heb je zin in: actie, comedy, horror, drama of wil je info over een specifieke film?",
+    []
+  );
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -34,10 +41,10 @@ form.addEventListener("submit", async (event) => {
     });
 
     const data = await result.json();
-    addAssistantMessage(data.message, data.image, data.usedTools);;
+    addAssistantMessage(data.message, data.usedTools);
   } catch (error) {
     console.error(error);
-    addAssistantMessage("Er ging iets mis met de server.", [], []);
+    addAssistantMessage("Er ging iets mis met de server.", []);
   } finally {
     button.disabled = false;
     button.textContent = "Send";
@@ -57,7 +64,7 @@ function addUserMessage(text) {
   messages.scrollTop = messages.scrollHeight;
 }
 
-function addAssistantMessage(text, image = "", usedTools = []) {
+function addAssistantMessage(text, usedTools = []) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("message-row", "assistant-row");
 
@@ -65,24 +72,16 @@ function addAssistantMessage(text, image = "", usedTools = []) {
   bubble.classList.add("bubble", "assistant-bubble");
 
   const textEl = document.createElement("div");
-  textEl.innerHTML = text;
+  textEl.innerHTML = micromark(text || "");
   bubble.appendChild(textEl);
 
-  if (typeof image === "string" && image.trim() !== "") {
-    const img = document.createElement("img");
-    img.src = `/images/${image}`;
-    img.style.maxWidth = "200px";
-    img.style.borderRadius = "10px";
-    img.style.marginTop = "10px";
-    bubble.appendChild(img);
-  }
-
-  // tools
   if (usedTools.length > 0) {
     const toolsWrap = document.createElement("div");
+    toolsWrap.classList.add("tools-wrap");
 
     usedTools.forEach((tool) => {
       const tag = document.createElement("span");
+      tag.classList.add("tool-tag");
       tag.textContent = `🔧 ${tool}`;
       toolsWrap.appendChild(tag);
     });
@@ -92,8 +91,5 @@ function addAssistantMessage(text, image = "", usedTools = []) {
 
   wrapper.appendChild(bubble);
   messages.appendChild(wrapper);
+  messages.scrollTop = messages.scrollHeight;
 }
-
-window.addEventListener("load", () => {
-  addAssistantMessage("Hallo! Waarmee kan ik je helpen?", "", []);
-});

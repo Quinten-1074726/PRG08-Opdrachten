@@ -3,26 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent Chat</title>
+  <title>CineMatch</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <main class="chat-container">
-    <h1>Agent Chat</h1>
+  <main class="cinema">
+    <header class="cinema-header">
+      <div>
+        <h1>CineMatch</h1>
+        <p>Jouw filmadviseur voor genres, ratings en kijktips</p>
+      </div>
+    </header>
 
-    <div id="messages" class="messages"></div>
+    <section class="screen">
+      <div class="screen-top"></div>
+      <div id="messages" class="messages"></div>
+    </section>
 
-        <form id="chat-form" class="chat-form">
-            <input
-            type="text"
-            id="prompt-input"
-            placeholder="Typ je vraag..."
-            autocomplete="off"
-            />
-            <button type="submit">Send</button>
-        </form>
-    </main>
+    <form id="chat-form" class="chat-form">
+      <input
+        type="text"
+        id="prompt-input"
+        placeholder="Vraag om een film, genre of kijktip..."
+        autocomplete="off"
+      />
+      <button type="submit">Send</button>
+    </form>
+  </main>
 
-    <script type="module" src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

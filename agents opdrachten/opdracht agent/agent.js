@@ -1,37 +1,59 @@
 import { createAgent } from "langchain";
-import { MemorySaver } from "@langchain/langgraph";
 import { AzureChatOpenAI } from "@langchain/openai";
-import * as z from "zod";
-
-import { generateImage } from "./tools.js";
+import { MemorySaver } from "@langchain/langgraph";
+import { ToolMessage } from "@langchain/core/messages";
+import { searchMovie, retrieve } from "./tools.js";
 
 const model = new AzureChatOpenAI({
-  temperature: 0.7,
+  temperature: 0.2,
 });
 
 const checkpointer = new MemorySaver();
 
-const responseFormat = z.object({
-  message: z.string().describe("Message to the user"),
-  image: z.string().describe("URL of the generated image, or empty string"),
-});
-
-export const agent = createAgent({
+const agent = createAgent({
   model,
-  tools: [generateImage],
+  tools: [searchMovie, retrieve],
   checkpointer,
-  responseFormat,
   systemPrompt: `
-  You are a creative storytelling assistant.
+Je bent CineMatch, een vriendelijke filmadviseur.
 
-  RULES:
-  - If the user asks for an image, character, scene, object, or visual story moment, you MUST use the generate_image tool.
-  - If the tool returns a valid image URL, put that exact URL in the "image" field.
-  - If the tool fails or returns an empty string, set "image" to an empty string and explain briefly that image generation failed.
-  - Always answer in Dutch unless the user uses another language.
+BELANGRIJK:
+- Gebruik ALTIJD de retrieve tool wanneer de gebruiker vraagt naar genres, advies of wat voor soort film hij moet kijken.
+- Gebruik ALTIJD de search_movie tool wanneer de gebruiker vraagt naar een specifieke film.
 
-  Always return:
-  - message
-  - image
-  `,
+Je mag niet gokken zonder de tools te gebruiken.
+
+Geef korte en duidelijke antwoorden.
+Noem genre, plot en rating als beschikbaar.
+`,
 });
+
+export async function callAgent(prompt, userid) {
+  const result = await agent.invoke(
+    {
+      messages: [{ role: "user", content: prompt }],
+    },
+    {
+      configurable: { thread_id: userid },
+    }
+  );
+
+  const finalMessage = result.messages.at(-1)?.content ?? "";
+
+  const usedTools = [];
+
+  for (const message of result.messages) {
+    if (
+      message instanceof ToolMessage &&
+      message.name &&
+      !usedTools.includes(message.name)
+    ) {
+      usedTools.push(message.name);
+    }
+  }
+
+  return {
+    message: finalMessage,
+    usedTools,
+  };
+}
