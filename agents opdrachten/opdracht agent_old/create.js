@@ -31,7 +31,7 @@ await vectorStore.addDocuments(chunks);
 
 await vectorStore.save("./documents");
 
-console.log(" vector store saved!");
+console.log("vector store saved!");
 
 const prompt = "Waar gaat dit document over?";
 const relevantDocs = await vectorStore.similaritySearch(prompt);

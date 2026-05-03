@@ -68,14 +68,19 @@ function addAssistantMessage(text, image = "", usedTools = []) {
   textEl.innerHTML = text;
   bubble.appendChild(textEl);
 
-  if (typeof image === "string" && image.trim() !== "") {
-    const img = document.createElement("img");
-    img.src = `/images/${image}`;
-    img.style.maxWidth = "200px";
-    img.style.borderRadius = "10px";
-    img.style.marginTop = "10px";
-    bubble.appendChild(img);
-  }
+if (typeof image === "string" && image.trim() !== "") {
+  const img = document.createElement("img");
+  img.src = image;
+  img.style.maxWidth = "200px";
+  img.style.borderRadius = "10px";
+  img.style.marginTop = "10px";
+
+  img.onerror = () => {
+    img.remove();
+  };
+
+  bubble.appendChild(img);
+}
 
   // tools
   if (usedTools.length > 0) {
