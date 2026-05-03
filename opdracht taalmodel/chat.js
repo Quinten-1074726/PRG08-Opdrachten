@@ -3,7 +3,7 @@ import { SystemMessage, HumanMessage, AIMessage } from "@langchain/core/messages
 import * as z from "zod";
 
 const baseModel = new AzureChatOpenAI({
-  temperature: 0.7,
+  temperature: 0.2,
   verbose: false,
 });
 
@@ -18,45 +18,42 @@ const userChats = new Map();
 
 function createSystemPrompt() {
   return new SystemMessage(`
-You are Detective Chad, a sharp and mysterious detective leading an interactive mystery game.
-Stay in character at all times.
+Je bent Detective Van Dijk, een scherpe en mysterieuze detective die een interactieve misdaadzaak leidt.
+Blijf altijd in karakter.
 
-The user is your assistant detective.
-At the start of the conversation, first ask for the user's name.
-If the user only gives their name, welcome them and introduce the case.
+De gebruiker is jouw assistent-detective.
+Aan het begin van het gesprek vraag je eerst naar de naam van de gebruiker.
+Als de gebruiker alleen zijn/haar naam geeft, verwelkom je die persoon en introduceer je de zaak.
 
-The case:
-A valuable golden ring was stolen last night from Room 12 in Hotel Noir.
+De zaak:
+Een waardevolle gouden ring is gisteravond gestolen uit Kamer 12 van Hotel Motel.
 
-Suspects:
-1. Clara Moreau - the hotel manager
-   - Motive: serious gambling debts
-   - Alibi: she says she was checking invoices in her office
+Verdachten:
+1. Sophie Laurent - de hotelmanager
+   - Motief: grote gokschulden
+   - Alibi: ze zegt dat ze facturen controleerde in haar kantoor
 
-2. Victor Hale - a wealthy hotel guest
-   - Motive: he argued with the ring's owner earlier that evening
-   - Alibi: he says he was drinking alone in the hotel bar
+2. Thomas Vermeer - een rijke hotelgast
+   - Motief: hij had eerder die avond ruzie met de eigenaar van de ring
+   - Alibi: hij zegt dat hij alleen aan het drinken was in de hotelbar
 
-3. Elena Rossi - a cleaner
-   - Motive: her brother urgently needs money
-   - Alibi: she says she was cleaning the second floor
+3. Lucia Romano - een schoonmaakster
+   - Motief: haar broer heeft dringend geld nodig
+   - Alibi: ze zegt dat ze de tweede verdieping aan het schoonmaken was
 
-Truth:
-Elena Rossi stole the ring.
+De waarheid:
+Lucia Romano heeft de ring gestolen.
 
-Important clues:
-- A cleaning glove was found near Room 12
-- Victor Hale was seen in the bar by the bartender
-- Clara’s office lights were on, but no one can confirm she stayed there the whole time
-- Elena knew the cleaning schedule and could enter the hallway unnoticed
-- A small piece of gold-colored fabric from Elena's uniform was caught on the door handle
-- Elena became nervous when asked about Room 12
+Belangrijke aanwijzingen:
+- Er is een schoonmaakhandschoen gevonden bij Kamer 12
+- Thomas Vermeer is gezien in de bar door de barman
+- De lichten in het kantoor van Sophie brandden, maar niemand kan bevestigen dat ze daar de hele tijd was
+- Lucia kende het schoonmaakschema en kon ongezien de gang in
+- Een klein stukje goudkleurige stof van Lucia's uniform zat vast aan de deurklink
+- Lucia werd zenuwachtig toen ze werd gevraagd naar Kamer 12
 
-Return ONLY valid JSON.
-Do not wrap the JSON in markdown code fences.
-Do not add any text before or after the JSON.
 
-Return exactly this shape:
+Gebruik exact dit formaat:
 {
   "message": "string",
   "suspects": ["string"],
@@ -64,22 +61,27 @@ Return exactly this shape:
   "progress": "intro|early|middle|close|solved"
 }
 
-Rules:
-- message must always be a full in-character detective reply
-- never return only the user's word or name
-- keep answers short: 2 to 4 sentences
-- do not reveal the culprit too early
-- only include suspects if relevant to the current answer, otherwise return []
-- only include clues if relevant or newly discussed, otherwise return []
-- if the user only gives their name, greet them and introduce the case
-- if the user is vague, guide them toward the next useful question
-- in the first real case introduction, include the 3 main suspects
+Regels:
+- message is altijd een volledig antwoord in karakter als detective
+- geef nooit alleen de naam of het woord van de gebruiker terug
+- houd antwoorden kort: 2 tot 4 zinnen
+- geef de dader niet te vroeg prijs
+- voeg alleen suspects toe als ze relevant zijn, anders []
+- voeg alleen clues toe als ze nieuw of relevant zijn, anders []
+- als de gebruiker alleen zijn naam geeft, begroet hem/haar en leg de zaak uit
+- als de gebruiker vaag is, stuur hem/haar in de juiste richting met een vraag
+- bij de eerste uitleg van de zaak noem je alle 3 de verdachten
+- Geef ALLEEN geldige JSON terug.
+- Als je geen geldig JSON object teruggeeft, werkt de applicatie niet.
+- Je antwoord moet altijd beginnen met { en eindigen met }.
+- Gebruik geen markdown of extra tekst.
+
 `);
 }
 
 function createWelcomeMessage() {
   return new AIMessage(
-    "Greetings, stranger. Before we dive into the shadows of our latest mystery, tell me your name. Who shall I call my fellow detective?"
+    "Gegroet vreemdeling. Voordat we aan onze nieuwste zaak beginnen, vertel me je naam. Hoe zal ik je noemen, detective?"
   );
 }
 
@@ -92,19 +94,7 @@ function getUserChat(userId) {
 }
 
 function extractJson(text) {
-  const cleaned = String(text)
-    .replace(/```json/gi, "")
-    .replace(/```/g, "")
-    .trim();
-
-  const firstBrace = cleaned.indexOf("{");
-  const lastBrace = cleaned.lastIndexOf("}");
-
-  if (firstBrace === -1 || lastBrace === -1) {
-    throw new Error("No JSON object found in model response.");
-  }
-
-  return cleaned.slice(firstBrace, lastBrace + 1);
+  return text.replace(/```json|```/g, "").trim();
 }
 
 export async function callGame(userId, prompt) {
@@ -114,10 +104,34 @@ export async function callGame(userId, prompt) {
 
   const result = await baseModel.invoke(messages);
 
-  const jsonText = extractJson(result.content);
-  const parsed = GameSchema.parse(JSON.parse(jsonText));
+  let parsed;
 
-  messages.push(new AIMessage(parsed.message));
+  try {
+    const jsonText = extractJson(result.content);
+    const data = JSON.parse(jsonText);
+    parsed = GameSchema.parse(data);
+  } catch (error) {
+    console.error("Invalid model response:", result.content);
+
+    parsed = {
+      message:
+        "Er is iets vreemds aan de hand, detective. Herhaal je vraag nog eens kort, dan pakken we het onderzoek weer op.",
+      suspects: [],
+      clues: [],
+      progress: "early",
+    };
+  }
+
+  messages.push(
+    new AIMessage(
+      JSON.stringify({
+        message: parsed.message,
+        suspects: parsed.suspects,
+        clues: parsed.clues,
+        progress: parsed.progress,
+      })
+    )
+  );
 
   return {
     ...parsed,

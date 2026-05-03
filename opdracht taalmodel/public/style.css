@@ -4,34 +4,61 @@
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #161616;
+  font-family: Georgia, "Times New Roman", serif;
+  background: #080808;
   color: #f5f5f5;
+  min-height: 100vh;
+  padding: 30px 16px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(180, 130, 70, 0.16), transparent 35%),
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: auto, 100% 4px;
 }
 
 .chat-container {
   max-width: 900px;
-  margin: 30px auto;
-  background: #222;
+  margin: 0 auto;
+  background: #151515;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  border: 1px solid #4b3425;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7);
+  position: relative;
 }
 
 .chat-header {
-  padding: 24px;
-  background: #2d2d2d;
-  border-bottom: 1px solid #3a3a3a;
+  padding: 26px 28px;
+  background:
+    linear-gradient(135deg, #2a1914, #171717 65%),
+    #222;
+  border-bottom: 1px solid #5a3b28;
+}
+
+.case-label {
+  margin: 0 0 8px;
+  color: #c49a5a;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .chat-header h1 {
   margin: 0 0 8px;
-  font-size: 2rem;
+  font-size: 2.2rem;
+  color: #f3d7a1;
+  text-shadow: 0 0 18px rgba(196, 154, 90, 0.25);
 }
 
 .chat-header p {
   margin: 0;
-  color: #d6d6d6;
+  color: #d8c4a8;
 }
 
 .messages {
@@ -41,11 +68,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: #1b1b1b;
+  background:
+    #0f0f0f;
 }
 
 .message {
   display: flex;
+  width: 100%;
 }
 
 .message.user {
@@ -59,46 +88,69 @@ body {
 .bubble {
   max-width: 75%;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: 14px;
   line-height: 1.5;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .message.user .bubble {
-  background: #cfe0ff;
-  color: #111;
+  background: #3b2730;
+  color: #f7e8cf;
+  border: 1px solid #7b4d57;
   border-bottom-right-radius: 4px;
 }
 
 .message.assistant .bubble {
-  background: #d9c9a3;
-  color: #111;
+  background: #dcc89b;
+  color: #15110b;
+  border: 1px solid #f0dcae;
   border-bottom-left-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .chat-form {
   display: flex;
   gap: 12px;
   padding: 20px;
-  background: #222;
-  border-top: 1px solid #3a3a3a;
+  background: #171717;
+  border-top: 1px solid #4b3425;
 }
 
 .chat-form input {
   flex: 1;
   padding: 14px 16px;
-  border: 1px solid #555;
+  border: 1px solid #7a5a34;
   border-radius: 10px;
   font-size: 1rem;
+  background: #0d0d0d;
+  color: #f3d7a1;
+  outline: none;
+}
+
+.chat-form input::placeholder {
+  color: #9f8c70;
+}
+
+.chat-form input:focus {
+  border-color: #c49a5a;
+  box-shadow: 0 0 0 3px rgba(196, 154, 90, 0.16);
 }
 
 .chat-form button {
-  padding: 14px 20px;
+  padding: 14px 22px;
   border: none;
   border-radius: 10px;
   background: #9c7b2f;
   color: white;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: bold;
+}
+
+.chat-form button:hover {
+  background: #b99138;
 }
 
 .chat-form button:disabled {
@@ -119,6 +171,10 @@ body {
   margin: 8px 0 8px 20px;
 }
 
+.bubble li {
+  margin-bottom: 5px;
+}
+
 .bubble strong {
   font-weight: 700;
 }
@@ -129,7 +185,30 @@ body {
   border-radius: 4px;
 }
 
+.tokens {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.messages::-webkit-scrollbar {
+  width: 10px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background: #111;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: #6f4e2a;
+  border-radius: 999px;
+}
+
 @media (max-width: 700px) {
+  body {
+    padding: 0;
+  }
+
   .chat-container {
     margin: 0;
     min-height: 100vh;
@@ -137,36 +216,10 @@ body {
   }
 
   .messages {
-    height: calc(100vh - 180px);
+    height: calc(100vh - 190px);
   }
 
   .bubble {
     max-width: 88%;
   }
-}
-
-.bubble {
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-.message {
-  width: 100%;
-}
-
-.bubble ul {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding-left: 20px;
-}
-
-.bubble li {
-  margin-bottom: 5px;
-}
-
-.tokens {
-  margin-top: 8px;
-  font-size: 0.75rem;
-  opacity: 0.6;
 }

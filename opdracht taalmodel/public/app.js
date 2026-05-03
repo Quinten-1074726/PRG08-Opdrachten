@@ -67,7 +67,12 @@ async function loadHistory() {
       if (item.role === "user") {
         addUserMessage(item.message);
       } else {
-        addAssistantMessage(item.message);
+        try {
+          const parsed = JSON.parse(item.message);
+          addStructuredMessage(parsed);
+        } catch {
+          addAssistantMessage(item.message);
+        }
       }
     }
   } catch (error) {
