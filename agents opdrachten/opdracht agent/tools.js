@@ -13,7 +13,7 @@ console.log("vector store loaded in tools.js");
 
 export const searchMovie = tool(
   async ({ title }) => {
-    console.log(`🔧 search_movie tool wordt uitgevoerd voor: ${title}`);
+    console.log(` search_movie tool wordt uitgevoerd voor: ${title}`);
 
     const apiKey = process.env.OMDB_API_KEY;
 

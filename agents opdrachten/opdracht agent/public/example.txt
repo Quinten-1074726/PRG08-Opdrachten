@@ -9,3 +9,7 @@ Fantasy past bij gebruikers die magie, werelden en avontuur leuk vinden.
 
 Als een gebruiker niet weet wat hij wil kijken, kan de agent vragen naar stemming, genre of favoriete film.
 Als een gebruiker een specifieke film noemt, kan de agent echte filmdata ophalen met de OMDb API.
+
+voorbeelden van genre Actie: John Wick, Mad Max: Fury Road, The Dark Knight, Mission: Impossible, Gladiator
+voorbeelden van genre Comedy: Superbad, The Hangover, Step Brothers, Mean Girls, Dumb and Dumber
+voorbeelden van genre Drama: The Shawshank Redemption, Forrest Gump, The Green Mile, Titanic, Whiplash

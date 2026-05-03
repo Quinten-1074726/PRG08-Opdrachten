@@ -5,19 +5,38 @@ const input = document.getElementById("prompt-input");
 const messages = document.getElementById("messages");
 const button = form.querySelector("button");
 
-let userid = localStorage.getItem("userid");
+let userId = localStorage.getItem("userId");
 
-if (!userid) {
-  userid = `cinematch-${crypto.randomUUID()}`;
-  localStorage.setItem("userid", userid);
+if (!userId) {
+  userId = crypto.randomUUID();
+  localStorage.setItem("userId", userId);
 }
 
-window.addEventListener("load", () => {
-  addAssistantMessage(
-    "Welkom bij CineMatch Waar heb je zin in: actie, comedy, horror, drama of wil je info over een specifieke film?",
-    []
-  );
-});
+loadHistory();
+
+async function loadHistory() {
+  try {
+    const response = await fetch("/api/gethistory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    const history = await response.json();
+
+    for (const item of history) {
+      if (item.role === "user") {
+        addUserMessage(item.message);
+      } else {
+        addAssistantMessage(item.message, item.usedTools || []);
+      }
+    }
+  } catch (error) {
+    addAssistantMessage("Could not load previous chat history.", []);
+  }
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -29,6 +48,7 @@ form.addEventListener("submit", async (event) => {
   input.value = "";
 
   button.disabled = true;
+  input.disabled = true;
   button.textContent = "Loading...";
 
   try {
@@ -37,17 +57,25 @@ form.addEventListener("submit", async (event) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ prompt, userid }),
+      body: JSON.stringify({ userId, message: prompt }),
     });
 
     const data = await result.json();
-    addAssistantMessage(data.message, data.usedTools);
+
+    if (!result.ok) {
+      addAssistantMessage(data.message || "Er ging iets mis.", []);
+      return;
+    }
+
+    addAssistantMessage(data.message, data.usedTools || []);
   } catch (error) {
     console.error(error);
     addAssistantMessage("Er ging iets mis met de server.", []);
   } finally {
     button.disabled = false;
+    input.disabled = false;
     button.textContent = "Send";
+    input.focus();
   }
 });
 
@@ -75,7 +103,7 @@ function addAssistantMessage(text, usedTools = []) {
   textEl.innerHTML = micromark(text || "");
   bubble.appendChild(textEl);
 
-  if (usedTools.length > 0) {
+  if (Array.isArray(usedTools) && usedTools.length > 0) {
     const toolsWrap = document.createElement("div");
     toolsWrap.classList.add("tools-wrap");
 
